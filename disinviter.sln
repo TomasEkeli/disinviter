@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7DB3E001-F05C-42D5-930B-56B01365C7BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "disinviter", "src\disinviter\disinviter.csproj", "{6FF6F11A-B9B3-4D5A-88A7-3360E862506F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "disinviter.tests", "src\disinviter.tests\disinviter.tests.csproj", "{AC2912D2-89C2-49F6-8C7E-0838296641AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FF6F11A-B9B3-4D5A-88A7-3360E862506F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FF6F11A-B9B3-4D5A-88A7-3360E862506F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FF6F11A-B9B3-4D5A-88A7-3360E862506F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FF6F11A-B9B3-4D5A-88A7-3360E862506F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC2912D2-89C2-49F6-8C7E-0838296641AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2912D2-89C2-49F6-8C7E-0838296641AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2912D2-89C2-49F6-8C7E-0838296641AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2912D2-89C2-49F6-8C7E-0838296641AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6FF6F11A-B9B3-4D5A-88A7-3360E862506F} = {7DB3E001-F05C-42D5-930B-56B01365C7BD}
+		{AC2912D2-89C2-49F6-8C7E-0838296641AB} = {7DB3E001-F05C-42D5-930B-56B01365C7BD}
+	EndGlobalSection
+EndGlobal
