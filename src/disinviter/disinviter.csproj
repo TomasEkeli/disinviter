@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="dolittle.sdk" Version="17.2.0" />
+  </ItemGroup>
+
 </Project>
