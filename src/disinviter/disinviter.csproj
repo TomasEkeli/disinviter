@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="dolittle.sdk" Version="17.2.0" />
+    <PackageReference Include="microsoft.aspnetcore.signalr.client" Version="6.0.7" />
   </ItemGroup>
 
 </Project>
