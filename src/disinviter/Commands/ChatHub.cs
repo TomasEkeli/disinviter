@@ -26,8 +26,6 @@ public class ChatHub : Hub
                 EventSourceId
             );
 
-        Console.WriteLine($"{Context.ConnectionId} {user} said: {message}");
-
         await Clients
             .All
             .SendAsync(
@@ -40,8 +38,6 @@ public class ChatHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        Console.WriteLine($"Connected {Context.ConnectionId}");
-
         var state = await _dolittleClient
             .Projections
             .ForTenant(TenantId.Development)
@@ -49,24 +45,18 @@ public class ChatHub : Hub
                 EventSourceId
             );
 
-        foreach(var message in state.Messages)
-        {
-            await Clients
-                .Caller
-                .SendAsync(
-                    "ReceiveMessage",
-                    message.Time,
-                    message.User,
-                    message.Message
-                );
-        }
+        await Clients
+            .Caller
+            .SendAsync(
+                "ReceiveMessages",
+                state.AllMessages
+            );
 
         await base.OnConnectedAsync();
     }
 
-    public override Task OnDisconnectedAsync(Exception exception)
+    public override Task OnDisconnectedAsync(Exception? exception)
     {
-        Console.WriteLine($"Disconnected {Context.ConnectionId}");
         return base.OnDisconnectedAsync(exception);
     }
 }

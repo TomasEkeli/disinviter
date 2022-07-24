@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.SignalR.Client;
+@using disinviter.Projections;
 @inject NavigationManager NavigationManager;
 @implements IAsyncDisposable;
 
@@ -51,7 +52,23 @@
             "ReceiveMessage",
             (time, user, message) =>
             {
-                _messages.Add($"{time:HH:mm:ss} - {user}: {message}");
+                _messages.Insert(0, $"{time:HH:mm:ss} - {user}: {message}");
+                _messages = _messages.Take(10).ToList();
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        _connection.On<List<ChatMessage>>(
+            "ReceiveMessages",
+            (messages) =>
+            {
+                _messages.Clear();
+                _messages.AddRange(
+                    messages
+                        .OrderByDescending(m => m.Time)
+                        .Take(10)
+                        .Select(m => $"{m.Time:HH:mm:ss} - {m.User}: {m.Message}")
+                );
                 InvokeAsync(StateHasChanged);
             }
         );

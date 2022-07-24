@@ -37,6 +37,11 @@
 
     void AddTodo()
     {
+        if (_newTodo is null)
+        {
+            return;
+        }
+
         _todos.Add(new TodoItem{ Title = _newTodo });
     }
 }
