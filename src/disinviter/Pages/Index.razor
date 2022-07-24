@@ -7,7 +7,7 @@
 
 <h1>You might be invited to Tore's birthday</h1>
 
-<div>State: @_connection.State</div>
+<div>State: @_connection?.State</div>
 <div class="form-group">
     <label>User: <input @bind="_userInput" /> </label>
 </div>
@@ -43,6 +43,7 @@
     protected override async Task OnInitializedAsync()
     {
         _connection = new HubConnectionBuilder()
+            // todo: use the correct host when deployed (env variable?)
             .WithUrl("http://localhost:5277/chatHub")
             .Build();
 

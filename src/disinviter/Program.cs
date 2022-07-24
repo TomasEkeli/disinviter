@@ -3,15 +3,32 @@ using disinviter.Commands;
 using disinviter.Data;
 using Dolittle.SDK;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddDolittle();
-builder.Services.AddResponseCompression(options =>
+var services = builder.Services;
+
+// todo: set up cors for just the current domain (env variable?)
+services.AddCors(cors =>
+    {
+        cors.AddPolicy(
+            "AllowAnyGet",
+            policy => policy
+                .AllowAnyOrigin()
+                .WithMethods("GET")
+                .AllowAnyHeader()
+        );
+    }
+);
+
+services.AddRazorPages();
+services.AddServerSideBlazor();
+services.AddSingleton<WeatherForecastService>();
+services.AddDolittle();
+
+services.AddResponseCompression(options =>
     {
         options.MimeTypes = ResponseCompressionDefaults
             .MimeTypes
@@ -20,8 +37,11 @@ builder.Services.AddResponseCompression(options =>
             );
     }
 );
+services.AddSignalR();
 
 var app = builder.Build();
+
+app.UseCors("AllowAnyGet");
 
 app.RegisterApplicationLifetimeEvents();
 
