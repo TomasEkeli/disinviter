@@ -11,5 +11,8 @@
         "**/node_modules": true,
         "**/testrun": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "cSpell.words": [
+        "disinviter"
+    ]
 }
