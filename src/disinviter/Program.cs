@@ -1,6 +1,5 @@
 using disinviter;
 using disinviter.Commands;
-using disinviter.Data;
 using Dolittle.SDK;
 using Dolittle.SDK.Extensions.AspNet;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -23,9 +22,9 @@ services.AddCors(cors =>
     }
 );
 
+services.AddHttpContextAccessor();
 services.AddRazorPages();
 services.AddServerSideBlazor();
-services.AddSingleton<WeatherForecastService>();
 services.AddDolittle();
 
 services.AddResponseCompression(options =>

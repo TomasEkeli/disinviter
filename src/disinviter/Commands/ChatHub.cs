@@ -1,7 +1,6 @@
 using disinviter.Events;
 using disinviter.Projections;
 using Dolittle.SDK;
-using Dolittle.SDK.Tenancy;
 using Microsoft.AspNetCore.SignalR;
 
 namespace disinviter.Commands;

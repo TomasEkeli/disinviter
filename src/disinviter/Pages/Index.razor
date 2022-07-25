@@ -9,15 +9,27 @@
 
 <h1>You might be invited to Tore's birthday</h1>
 
-<div>State: @_connection?.State</div>
-<div class="form-group">
-    <label>User: <input @bind="_user" /> </label>
-</div>
-<div class="form-group">
-    <label>Message: <input @bind="_message" size="50" /> </label>
+<div class="card">
+
+    <div class="card-header">State: @_connection?.State</div>
+    <div class="card-body">
+        <div class="form-group">
+            @if(_user is null)
+            {
+                <label>User: <input @bind="_user" /></label>
+            }
+            else
+            {
+                <label>User: @_user</label>
+            }
+            <div class="form-group">
+                <label>Message: <input @bind="_message" @onkeyup="SubmitMessage" size="50"  /> </label>
+                <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
 <ul id="messagesList">
     @foreach (var message in _messages)
     {
@@ -88,9 +100,22 @@
         }
     }
 
+    async Task SubmitMessage(KeyboardEventArgs args)
+    {
+        if (IsConnected
+            && (args.Code == "Enter" || args.Code == "NumpadEnter")
+        )
+        {
+            await Send();
+            _message = null;
+        }
+    }
+
     async Task Send()
     {
-        if (IsConnected)
+        if (IsConnected
+            && !string.IsNullOrWhiteSpace(_user)
+            && !string.IsNullOrWhiteSpace(_message))
         {
             await _connection!.SendAsync("SendMessage", _user, _message);
         }
@@ -98,7 +123,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         var uri = new Uri($"{Configuration["SIGNALR_HOST"]}/chatHub");
         _connection = new HubConnectionBuilder()
             // todo: use the correct host when deployed (env variable?)
