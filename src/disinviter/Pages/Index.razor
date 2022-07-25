@@ -11,12 +11,11 @@
 
 <div>State: @_connection?.State</div>
 <div class="form-group">
-    <label>User: <input @bind="_userInput" /> </label>
+    <label>User: <input @bind="_user" /> </label>
 </div>
 <div class="form-group">
-    <label>Message: <input @bind="_messageInput" size="50" /> </label>
+    <label>Message: <input @bind="_message" size="50" /> </label>
 </div>
-
 
 <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
 <ul id="messagesList">
@@ -26,19 +25,74 @@
     }
 </ul>
 
+<div class="card">
+    <div class="card-header">
+        <h3>Sounds!</h3>
+    </div>
+    <div class="card-body">
+        <button @onclick=@(()=>Play("drikkevise"))>Drikkevise</button>
+        <button @onclick=@(()=>Toast())>Skål</button>
+        @if (_play is not null)
+        {
+            <button @onclick=@(()=>Stop())>Stop</button>
+        }
+        @if (_play == "drikkevise")
+        {
+            <audio autoplay><source src="/sounds/drikkevise.mp3" /></audio>
+        }
+        @if (_play == "tore")
+        {
+            <audio autoplay><source src="/sounds/tore.mp3" /></audio>
+        }
+        @if (_play == "mike")
+        {
+            <audio autoplay><source src="/sounds/mike.mp3" /></audio>
+        }
+    </div>
+</div>
+
+
+
 @code {
+    string? _playedBy = null;
+    string? _stoppedBy = null;
+    string? _play = null;
     HubConnection? _connection;
     List<string> _messages = new List<string>();
-    string? _userInput;
-    string? _messageInput;
+    string? _user;
+    string? _message;
 
     public bool IsConnected => _connection?.State == HubConnectionState.Connected;
+
+    async Task Play(string soundName)
+    {
+        if (IsConnected)
+        {
+            await _connection!.SendAsync("Play", _user, soundName);
+        }
+    }
+
+    async Task Toast()
+    {
+        if (IsConnected)
+        {
+            await _connection!.SendAsync("Toast", _user);
+        }
+    }
+
+    async Task Stop()
+    {
+        if (IsConnected)
+        {
+            await _connection!.SendAsync("Stop", _user);
+        }
+    }
 
     async Task Send()
     {
         if (IsConnected)
         {
-            await _connection!.SendAsync("SendMessage", _userInput, _messageInput);
+            await _connection!.SendAsync("SendMessage", _user, _message);
         }
     }
 
@@ -72,6 +126,26 @@
                         .Take(10)
                         .Select(m => $"{m.Time:HH:mm:ss} - {m.User}: {m.Message}")
                 );
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        _connection.On<string, string>(
+            "SoundPlayed",
+            (user, soundName) =>
+            {
+                _playedBy = user;
+                _play = soundName;
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        _connection.On<string>(
+            "SoundStopped",
+            (user) =>
+            {
+                _stoppedBy = user;
+                _play = null;
                 InvokeAsync(StateHasChanged);
             }
         );

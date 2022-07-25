@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 
 WORKDIR /app
 COPY --from=build /src/disinviter/out ./
+COPY --from=build /src/disinviter/sounds ./wwwroot/sounds
 
 EXPOSE 80
 ENTRYPOINT ["dotnet", "disinviter.dll"]
