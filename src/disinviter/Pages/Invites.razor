@@ -11,6 +11,8 @@
 
 <h1>Invitations</h1>
 
+<div>State: @_connection?.State</div>
+
 <div class="form-group">
     <label>Invite:
         <input placeholder="name" @bind="_newPersonName" />
@@ -50,6 +52,10 @@
 
     public async Task InviteNew()
     {
+        if(_newPersonName is null)
+        {
+            return;
+        }
         await _connection
             ?.SendAsync(
                 nameof(PersonCommands.Invite),
@@ -79,6 +85,7 @@
     {
         if (_connection != null)
         {
+            Console.WriteLine($"{_connection.ConnectionId} disposing connection");
             await _connection.DisposeAsync();
         }
     }
@@ -89,6 +96,7 @@
 
         _connection = new HubConnectionBuilder()
             .WithUrl(uri.AbsoluteUri)
+            .WithAutomaticReconnect()
             .Build();
 
         _connection.On<string>(
@@ -124,6 +132,7 @@
             }
         );
 
+        Console.WriteLine($"Connecting to {uri}");
         await _connection.StartAsync();
     }
 }

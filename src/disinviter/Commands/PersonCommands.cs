@@ -55,6 +55,7 @@ public class PersonCommands : Hub<IInvitationMessages>
 
     public override async Task OnConnectedAsync()
     {
+        Console.WriteLine($"{Context.ConnectionId} connected");
         var state = await _dolittleClient
             .Projections
             .ForTenant(TenantId.Development)
@@ -69,5 +70,14 @@ public class PersonCommands : Hub<IInvitationMessages>
             );
 
         await base.OnConnectedAsync();
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        Console.WriteLine(
+            $"{Context.ConnectionId} disconnected. Aborted: {Context.ConnectionAborted.IsCancellationRequested}, Exception: {exception} {exception?.Message}"
+        );
+
+        await base.OnDisconnectedAsync(exception);
     }
 }
