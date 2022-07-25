@@ -20,7 +20,7 @@ public class ChatHub : Hub
     {
         await _dolittleClient
             .EventStore
-            .ForTenant(TenantId.Development)
+            .ForTenant(SingleTenant.TenantId)
             .CommitEvent(
                 new ChatMessageSent(user, message),
                 EventSourceId
@@ -40,7 +40,7 @@ public class ChatHub : Hub
     {
         var state = await _dolittleClient
             .Projections
-            .ForTenant(TenantId.Development)
+            .ForTenant(SingleTenant.TenantId)
             .Get<ChatMessagesProjection>(
                 EventSourceId
             );

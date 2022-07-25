@@ -1,7 +1,6 @@
 using disinviter.Events;
 using disinviter.Projections;
 using Dolittle.SDK;
-using Dolittle.SDK.Tenancy;
 using Microsoft.AspNetCore.SignalR;
 
 namespace disinviter.Commands;
@@ -27,7 +26,7 @@ public class PersonCommands : Hub<IInvitationMessages>
     {
         await _dolittleClient
             .EventStore
-            .ForTenant(TenantId.Development)
+            .ForTenant(SingleTenant.TenantId)
             .CommitEvent(
                 new PersonInvited(name),
                 EventSourceId
@@ -42,7 +41,7 @@ public class PersonCommands : Hub<IInvitationMessages>
     {
         await _dolittleClient
             .EventStore
-            .ForTenant(TenantId.Development)
+            .ForTenant(SingleTenant.TenantId)
             .CommitEvent(
                 new PersonSnubbed(name),
                 EventSourceId
@@ -58,7 +57,7 @@ public class PersonCommands : Hub<IInvitationMessages>
         Console.WriteLine($"{Context.ConnectionId} connected");
         var state = await _dolittleClient
             .Projections
-            .ForTenant(TenantId.Development)
+            .ForTenant(SingleTenant.TenantId)
             .Get<PartyInvitations>(
                 EventSourceId
             );

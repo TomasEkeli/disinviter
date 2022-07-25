@@ -2,6 +2,7 @@ using disinviter;
 using disinviter.Commands;
 using disinviter.Data;
 using Dolittle.SDK;
+using Dolittle.SDK.Extensions.AspNet;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,8 @@ services.AddSignalR();
 
 var app = builder.Build();
 
+SingleTenant.TenantId = app.Configuration["SINGLE_TENANT_ID"];
+app.UseDolittle();
 app.UseCors("AllowAnyGet");
 
 // Configure the HTTP request pipeline.
