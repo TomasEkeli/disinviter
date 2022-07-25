@@ -4,7 +4,7 @@ name: 'disinviter'
 services:
 
   runtime:
-    image: dolittle/runtime:8.4.1-development
+    image: dolittle/runtime:8.0.1-development
     ports:
       - 9700:9700
       - 27017:27017

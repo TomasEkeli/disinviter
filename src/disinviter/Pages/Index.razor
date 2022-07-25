@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 @using disinviter.Projections;
 @inject NavigationManager NavigationManager;
+@inject IConfiguration Configuration;
 @implements IAsyncDisposable;
 
 <PageTitle>Index</PageTitle>
@@ -43,9 +44,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+
+        var uri = new Uri($"{Configuration["SIGNALR_HOST"]}/chatHub");
         _connection = new HubConnectionBuilder()
             // todo: use the correct host when deployed (env variable?)
-            .WithUrl("http://localhost:5277/chatHub")
+            .WithUrl(uri.AbsoluteUri)
             .Build();
 
         _connection.On<DateTimeOffset, string, string>(

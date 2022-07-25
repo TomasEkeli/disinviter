@@ -3,6 +3,7 @@
 @using disinviter.Concepts
 @using disinviter.Commands
 @using disinviter.Projections;
+@inject IConfiguration Configuration;
 @implements IAsyncDisposable;
 
 
@@ -84,8 +85,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var uri = new Uri($"{Configuration["SIGNALR_HOST"]}/person");
+
         _connection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:5277/person")
+            .WithUrl(uri.AbsoluteUri)
             .Build();
 
         _connection.On<string>(
