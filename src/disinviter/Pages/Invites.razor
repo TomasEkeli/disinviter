@@ -1,6 +1,7 @@
 @page "/invites"
 @using Microsoft.AspNetCore.SignalR.Client;
 @using disinviter.Concepts
+@using disinviter.Commands
 @using disinviter.Projections;
 @implements IAsyncDisposable;
 
@@ -48,18 +49,29 @@
 
     public async Task InviteNew()
     {
-        Console.WriteLine("Inviting " + _newPersonName);
-        await _connection?.SendAsync("Invite", _newPersonName);
+        await _connection
+            ?.SendAsync(
+                nameof(PersonCommands.Invite),
+                _newPersonName
+            );
     }
 
     public async Task Invite(string personName)
     {
-        await _connection?.SendAsync("Invite", personName);
+        await _connection
+            ?.SendAsync(
+                nameof(PersonCommands.Invite),
+                personName
+            );
     }
 
     public async Task Snub(string personName)
     {
-        await _connection?.SendAsync("Snub", personName);
+        await _connection
+            ?.SendAsync(
+                nameof(PersonCommands.Snub),
+                personName
+            );
     }
 
     public async ValueTask DisposeAsync()
@@ -77,10 +89,9 @@
             .Build();
 
         _connection.On<string>(
-            "Invited",
+            nameof(IInvitationMessages.Invited),
             personName =>
             {
-                Console.WriteLine("Received invited " + personName);
                 _invited.Add(personName);
                 _snubbed.Remove(personName);
 
@@ -89,10 +100,9 @@
         );
 
         _connection.On<string>(
-            "Snubbed",
+            nameof(IInvitationMessages.Snubbed),
             personName =>
             {
-                Console.WriteLine("Received snubbed " + personName);
                 _snubbed.Add(personName);
                 _invited.Remove(personName);
 
@@ -101,12 +111,9 @@
         );
 
         _connection.On<PartyInvitations>(
-            "PartyInvitations",
+            nameof(IInvitationMessages.PartyInvitations),
             m =>
             {
-                Console.WriteLine(
-                    $"got {m.Invited.Count()} invitations, {m.Snubbed.Count()} snubs"
-                );
                 _invited = m.Invited;
                 _snubbed = m.Snubbed;
 

@@ -6,7 +6,14 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace disinviter.Commands;
 
-public class PersonCommands : Hub
+public interface IInvitationMessages
+{
+    Task Invited(string name);
+    Task Snubbed(string name);
+    Task PartyInvitations(PartyInvitations invitations);
+}
+
+public class PersonCommands : Hub<IInvitationMessages>
 {
     const string EventSourceId = "PersonCommands";
     readonly IDolittleClient _dolittleClient;
@@ -16,75 +23,51 @@ public class PersonCommands : Hub
         _dolittleClient = dolittleClient;
     }
 
-    public async Task<bool> Invite(string name)
+    public async Task Invite(string name)
     {
-        try
-        {
-            await _dolittleClient
-                .EventStore
-                .ForTenant(TenantId.Development)
-                .CommitEvent(
-                    new PersonInvited(name),
-                    EventSourceId
-                );
-
-            Console.WriteLine($"Invited {name}");
-
-            await Clients.All.SendAsync(
-                "Invited",
-                name
+        await _dolittleClient
+            .EventStore
+            .ForTenant(TenantId.Development)
+            .CommitEvent(
+                new PersonInvited(name),
+                EventSourceId
             );
 
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        await Clients.All.Invited(
+            name
+        );
     }
 
-    public async Task<bool> Snub(string name)
+    public async Task Snub(string name)
     {
-        try
-        {
-            await _dolittleClient
-                .EventStore
-                .ForTenant(TenantId.Development)
-                .CommitEvent(
-                    new PersonSnubbed(name),
-                    EventSourceId
-                );
-
-            Console.WriteLine($"Snubbed {name}");
-
-            await Clients.All.SendAsync(
-                "Snubbed",
-                name
+        await _dolittleClient
+            .EventStore
+            .ForTenant(TenantId.Development)
+            .CommitEvent(
+                new PersonSnubbed(name),
+                EventSourceId
             );
 
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        await Clients.All.Snubbed(
+            name
+        );
     }
 
     public override async Task OnConnectedAsync()
     {
-        Console.WriteLine($"{Context.ConnectionId} Connected");
         var state = await _dolittleClient
             .Projections
             .ForTenant(TenantId.Development)
             .Get<PartyInvitations>(
                 EventSourceId
             );
-        await base.OnConnectedAsync();
+
         await Clients
             .Caller
-            .SendAsync(
-                "PartyInvitations",
+            .PartyInvitations(
                 state
             );
+
+        await base.OnConnectedAsync();
     }
 }

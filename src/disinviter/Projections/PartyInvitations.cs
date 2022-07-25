@@ -12,20 +12,20 @@ public class PartyInvitations
     [KeyFromEventSource]
     public void On(PersonInvited evt, ProjectionContext context)
     {
-        Invited.Add(evt.Name);
-        if (Snubbed.Contains(evt.Name))
+        Invited.Add(evt.InvitedName);
+        if (Snubbed.Contains(evt.InvitedName))
         {
-            Snubbed.Remove(evt.Name);
+            Snubbed.Remove(evt.InvitedName);
         }
     }
 
     [KeyFromEventSource]
     public void On(PersonSnubbed evt, ProjectionContext context)
     {
-        Snubbed.Add(evt.Name);
-        if (Invited.Contains(evt.Name))
+        Snubbed.Add(evt.SnubbedName);
+        if (Invited.Contains(evt.SnubbedName))
         {
-            Invited.Remove(evt.Name);
+            Invited.Remove(evt.SnubbedName);
         }
     }
 }
