@@ -1,0 +1,119 @@
+@page "/invites"
+@using Microsoft.AspNetCore.SignalR.Client;
+@using disinviter.Concepts
+@using disinviter.Projections;
+@implements IAsyncDisposable;
+
+
+<PageTitle>Invites</PageTitle>
+
+<h1>Invitations</h1>
+
+<div class="form-group">
+    <label>Invite:
+        <input placeholder="name" @bind="_newPersonName" />
+    </label>
+    <button @onclick="InviteNew">Invite</button>
+</div>
+
+<h2>Invited</h2>
+<ul id="invited-people">
+    @foreach (var name in _invited)
+    {
+        <li>
+            @name
+            <button @onclick="() => Snub(name)">Snub</button>
+        </li>
+    }
+</ul>
+
+<h2>Snubbed</h2>
+<ul id="snubbed-people">
+    @foreach (var name in _snubbed)
+    {
+        <li>
+            @name
+            <button @onclick="() => Invite(name)">Invite</button>
+        </li>
+
+    }
+</ul>
+
+@code {
+    HubConnection? _connection;
+    List<string> _invited = new List<string>();
+    List<string> _snubbed = new List<string>();
+    string? _newPersonName;
+    public bool IsConnected => _connection?.State == HubConnectionState.Connected;
+
+    public async Task InviteNew()
+    {
+        Console.WriteLine("Inviting " + _newPersonName);
+        await _connection?.SendAsync("Invite", _newPersonName);
+    }
+
+    public async Task Invite(string personName)
+    {
+        await _connection?.SendAsync("Invite", personName);
+    }
+
+    public async Task Snub(string personName)
+    {
+        await _connection?.SendAsync("Snub", personName);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_connection != null)
+        {
+            await _connection.DisposeAsync();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _connection = new HubConnectionBuilder()
+            .WithUrl("http://localhost:5277/person")
+            .Build();
+
+        _connection.On<string>(
+            "Invited",
+            personName =>
+            {
+                Console.WriteLine("Received invited " + personName);
+                _invited.Add(personName);
+                _snubbed.Remove(personName);
+
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        _connection.On<string>(
+            "Snubbed",
+            personName =>
+            {
+                Console.WriteLine("Received snubbed " + personName);
+                _snubbed.Add(personName);
+                _invited.Remove(personName);
+
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        _connection.On<PartyInvitations>(
+            "PartyInvitations",
+            m =>
+            {
+                Console.WriteLine(
+                    $"got {m.Invited.Count()} invitations, {m.Snubbed.Count()} snubs"
+                );
+                _invited = m.Invited;
+                _snubbed = m.Snubbed;
+
+                InvokeAsync(StateHasChanged);
+            }
+        );
+
+        await _connection.StartAsync();
+    }
+}

@@ -3,7 +3,6 @@ using disinviter.Commands;
 using disinviter.Data;
 using Dolittle.SDK;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,8 +42,6 @@ var app = builder.Build();
 
 app.UseCors("AllowAnyGet");
 
-app.RegisterApplicationLifetimeEvents();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -58,6 +55,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
+app.MapHub<PersonCommands>("/person");
 app.MapHub<ChatHub>("/chatHub");
 app.MapFallbackToPage("/_Host");
 
