@@ -13,18 +13,13 @@
 
     <div class="card-header">State: @_connection?.State</div>
     <div class="card-body">
-        <div class="form-group">
-            @if(_user is null)
-            {
-                <label>User: <input @bind="_user" /></label>
-            }
-            else
-            {
-                <label>User: @_user</label>
-            }
-            <div class="form-group">
-                <label>Message: <input @bind="_message" @onkeyup="SubmitMessage" size="50"  /> </label>
-            </div>
+        <div class="input-group">
+            <label class="input-group-text col-3">User:</label>
+            <input class="form-control" @bind="_user" disabled="@(_user is not null)"/>
+        </div>
+        <div class="input-group">
+            <label class="input-group-text col-3">Message:</label>
+            <input class="form-control" @bind="_message" @onkeyup="SubmitMessage" size="50"  />
         </div>
     </div>
     <div class="card-footer">

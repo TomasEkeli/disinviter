@@ -10,13 +10,19 @@
 
 <h1>Invitations</h1>
 
-<div>State: @_connection?.State</div>
 
-<div class="form-group">
-    <label>Invite:
-        <input placeholder="name" @bind="_newPersonName" />
-    </label>
-    <button @onclick="InviteNew">Invite</button>
+<div class="card-container col-7">
+    <div class="card-header">State: @_connection?.State</div>
+    <div class="card-body">
+        <div class="input-group">
+            <label class="input-group-text col-2">Invite:
+            </label>
+            <input class="form-control" placeholder="Name" @bind="_newPersonName" />
+            <button
+                class="btn btn-primary"
+                @onclick="InviteNew">Invite</button>
+        </div>
+    </div>
 </div>
 
 <div class="card-column">
