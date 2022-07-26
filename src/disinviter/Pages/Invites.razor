@@ -1,6 +1,5 @@
 @page "/invites"
 @using Microsoft.AspNetCore.SignalR.Client;
-@using disinviter.Concepts
 @using disinviter.Commands
 @using disinviter.Projections;
 @inject IConfiguration Configuration;
@@ -20,28 +19,37 @@
     <button @onclick="InviteNew">Invite</button>
 </div>
 
-<h2>Invited</h2>
-<ul id="invited-people">
+<div class="card-column">
+    <h2>Invited</h2>
     @foreach (var name in _invited)
     {
-        <li>
-            @name
-            <button @onclick="() => Snub(name)">Snub</button>
-        </li>
-    }
-</ul>
+        <div class="card-container">
+            <div class="card-header">
+                @name
 
-<h2>Snubbed</h2>
-<ul id="snubbed-people">
+            </div>
+            <div class="card-body">
+                <button @onclick="() => Snub(name)">Snub</button>
+            </div>
+        </div>
+
+    }
+</div>
+
+<div class="card-column">
+    <h2>Snubbed</h2>
     @foreach (var name in _snubbed)
     {
-        <li>
-            @name
-            <button @onclick="() => Invite(name)">Invite</button>
-        </li>
-
+        <div class="card-container">
+            <div class="card-header">
+                @name
+            </div>
+            <div class="card-body">
+                <button @onclick="() => Invite(name)">Invite</button>
+            </div>
+        </div>
     }
-</ul>
+</div>
 
 @code {
     HubConnection? _connection;
@@ -52,7 +60,7 @@
 
     public async Task InviteNew()
     {
-        if(_newPersonName is null)
+        if (!IsConnected || string.IsNullOrWhiteSpace(_newPersonName))
         {
             return;
         }
@@ -65,6 +73,10 @@
 
     public async Task Invite(string personName)
     {
+        if (!IsConnected || string.IsNullOrWhiteSpace(personName))
+        {
+            return;
+        }
         await _connection
             ?.SendAsync(
                 nameof(PersonCommands.Invite),
@@ -74,6 +86,10 @@
 
     public async Task Snub(string personName)
     {
+        if (!IsConnected || string.IsNullOrWhiteSpace(personName))
+        {
+            return;
+        }
         await _connection
             ?.SendAsync(
                 nameof(PersonCommands.Snub),
