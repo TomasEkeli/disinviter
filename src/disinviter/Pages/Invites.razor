@@ -29,7 +29,10 @@
 
             </div>
             <div class="card-body">
-                <button @onclick="() => Snub(name)">Snub</button>
+                <button class="btn btn-danger btn-lg" @onclick="() => Snub(name)">
+                    <span class="oi oi-thumb-down" aria-hidden="true"></span>
+                    Snub
+                </button>
             </div>
         </div>
 
@@ -45,7 +48,10 @@
                 @name
             </div>
             <div class="card-body">
-                <button @onclick="() => Invite(name)">Invite</button>
+                <button class="btn btn-primary invite btn-lg" @onclick="() => Invite(name)">
+                    <span class="oi oi-thumb-up" aria-hidden="true"></span>
+                    Invite
+                </button>
             </div>
         </div>
     }
